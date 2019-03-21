@@ -1,6 +1,9 @@
 from bs4 import BeautifulSoup as soup 
 from urllib.request import urlopen as Ureq  
 import numpy as np 
+import re
+
+
 #Downloads raw html
 #Parses html
 def get_soup(Link):
@@ -47,9 +50,39 @@ def Find_Shipping(soupage):
     shipping_list = []
     Shipping_Container = soupage.findAll("li",{"class":"price-ship"})
     for item in Shipping_Container:
-        print(item.get_text().strip())
+           Ship_Price = item.get_text().strip()
+           shipping_list.append(Ship_Price)
+    return(shipping_list)
 
+def Find_Reveiws(soupage):
+    num_reveiw_list = []
+    Reveiw_Container = soupage.findAll("span",{"class":"item-rating-num"})
+    for item in Reveiw_Container:
+        Num_Reveiws = item.get_text().strip()
+        num_reveiw_list.append(Num_Reveiws)
+    return(num_reveiw_list)
+def Find_Amount_of_Stars(soupage):
+    stars_list = []
+    counter = 0
+    Stars_Container = soupage.findAll("i",{"class":"rating"})
+    Tag_String = (Stars_Container)
+    for item in Tag_String:
+        counter +=1
+    print(counter)
 
+import csv
+with open('Newegg.csv', 'w', newline='') as csvfile:
+    spamwriter = csv.writer(csvfile, delimiter=',',quotechar =',')
+    spamwriter.writerow(["Name of Card","Price","Shipping","Number of reveiws"])
+    
+    spamwriter.writerow(Find_Item_Name(get_soup("https://www.newegg.com/Video-Cards-Video-Devices/Category/ID-38?Tpk=graphics%20card")))
+        
+    spamwriter.writerow(Find_Price(get_soup("https://www.newegg.com/Video-Cards-Video-Devices/Category/ID-38?Tpk=graphics%20card")))
+
+print(Find_Amount_of_Stars(get_soup("https://www.newegg.com/Video-Cards-Video-Devices/Category/ID-38?Tpk=graphics%20card")))
+
+print(Find_Reveiws(get_soup("https://www.newegg.com/Video-Cards-Video-Devices/Category/ID-38?Tpk=graphics%20card")))
 print(Find_Shipping(get_soup("https://www.newegg.com/Video-Cards-Video-Devices/Category/ID-38?Tpk=graphics%20card")))
 print(Find_Item_Name(get_soup("https://www.newegg.com/Video-Cards-Video-Devices/Category/ID-38?Tpk=graphics%20card")))
 print(Find_Price(get_soup("https://www.newegg.com/Video-Cards-Video-Devices/Category/ID-38?Tpk=graphics%20card")))
+
